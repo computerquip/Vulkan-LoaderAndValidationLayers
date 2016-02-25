@@ -357,7 +357,7 @@ static void *loader_platform_get_proc_address(loader_platform_dl_handle library,
                                               const char *name) {
     assert(library);
     assert(name);
-    return GetProcAddress(library, name);
+    return GetProcAddress((void*)library, name);
 }
 static char *loader_platform_get_proc_address_error(const char *name) {
     static char errorMsg[120];
