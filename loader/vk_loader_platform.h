@@ -368,7 +368,13 @@ static char *loader_platform_get_proc_address_error(const char *name) {
 
 // Threads:
 typedef HANDLE loader_platform_thread;
+
+#if defined(__MINGW32__)
+#define THREAD_LOCAL_DECL __thread
+#else
 #define THREAD_LOCAL_DECL __declspec(thread)
+#endif
+
 #define LOADER_PLATFORM_THREAD_ONCE_DECLARATION(var)                           \
     INIT_ONCE var = INIT_ONCE_STATIC_INIT;
 #define LOADER_PLATFORM_THREAD_ONCE_DEFINITION(var) INIT_ONCE var;
