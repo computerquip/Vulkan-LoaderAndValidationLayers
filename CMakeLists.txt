@@ -11,9 +11,10 @@ project (VULKAN)
 # vulkan-<major>.dll (and other files).
 set(MAJOR "1")
 
+add_definitions(-D__STDC_FORMAT_MACROS)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
+    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=0x0600)
     set(DisplayServer Win32)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
@@ -21,7 +22,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(-DVK_USE_PLATFORM_XCB_KHR)
     set(DisplayServer Xcb)
-
 #   TODO: Basic support is present for Xlib but is untested.
 #         Wayland/Mir support is stubbed in but unimplemented and untested.
 

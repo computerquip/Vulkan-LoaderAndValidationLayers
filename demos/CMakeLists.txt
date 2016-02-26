@@ -10,9 +10,9 @@ file(COPY ${TEXTURES} DESTINATION ${CMAKE_BINARY_DIR}/demos)
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-if(WIN32)
+if(MSVC)
   set (LIBRARIES "vulkan-${MAJOR}")
-elseif(UNIX)
+else()
   set (LIBRARIES "vulkan")
 else()
 endif()
@@ -52,7 +52,7 @@ if(WIN32)
    file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/demos)
 else()
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/demos/tri-vert.spv
-       COMMAND ${GLSLANG_PREFIX}/build/install/bin/glslangValidator -s -V -o tri-vert.spv ${PROJECT_SOURCE_DIR}/demos/tri.vert 
+       COMMAND ${GLSLANG_PREFIX}/build/install/bin/glslangValidator -s -V -o tri-vert.spv ${PROJECT_SOURCE_DIR}/demos/tri.vert
        DEPENDS tri.vert ${GLSLANG_PREFIX}/build/install/bin/glslangValidator
        )
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/demos/tri-frag.spv

@@ -52,14 +52,14 @@ else()
     endif()
 endif()
 
-if (WIN32)
+if (MSVC)
     macro(add_vk_layer target)
 	add_custom_command(OUTPUT VkLayer_${target}.def
 		COMMAND ${PYTHON_CMD} ${PROJECT_SOURCE_DIR}/vk-generate.py win-def-file VkLayer_${target} layer > VkLayer_${target}.def
 		DEPENDS ${PROJECT_SOURCE_DIR}/vk-generate.py ${PROJECT_SOURCE_DIR}/vk.py
 	)
 	add_library(VkLayer_${target} SHARED ${ARGN} VkLayer_${target}.def)
-    target_link_Libraries(VkLayer_${target} layer_utils)
+    target_link_libraries(VkLayer_${target} layer_utils)
 	add_dependencies(VkLayer_${target} layer_utils_static)
 	add_dependencies(VkLayer_${target} generate_vk_layer_helpers)
 	set_target_properties(VkLayer_${target} PROPERTIES LINK_FLAGS "/DEF:${CMAKE_CURRENT_BINARY_DIR}/VkLayer_${target}.def")
@@ -67,10 +67,15 @@ if (WIN32)
 else()
     macro(add_vk_layer target)
 	add_library(VkLayer_${target} SHARED ${ARGN})
-    target_link_Libraries(VkLayer_${target} layer_utils)
+    target_link_libraries(VkLayer_${target} layer_utils)
 	add_dependencies(VkLayer_${target} generate_vk_layer_helpers)
 	set_target_properties(VkLayer_${target} PROPERTIES LINK_FLAGS "-Wl,-Bsymbolic")
 	install(TARGETS VkLayer_${target} DESTINATION ${PROJECT_BINARY_DIR}/install_staging)
+
+	if (WIN32)
+			target_link_libraries(VkLayer_${target} -lshlwapi)
+	endif()
+	
     endmacro()
 endif()
 
@@ -85,7 +90,7 @@ include_directories(
 if (WIN32)
     set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
     set (CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
-    
+
     # For VS 2015, which uses compiler version 1900, draw_state.cpp fails with too many objects
     # without either optimizations enabled, or setting the /bigobj compilation option.  Since
     # optimizations are enabled in a release build, this only affects the debug build.  For now,

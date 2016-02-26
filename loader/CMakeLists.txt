@@ -32,7 +32,7 @@ set(LOADER_SRCS
 )
 
 
-if (WIN32)
+if (MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
 
     add_library(vulkan-${MAJOR} SHARED ${LOADER_SRCS} dirent_on_windows.c ${CMAKE_CURRENT_BINARY_DIR}/vulkan-${MAJOR}.def)
@@ -40,11 +40,15 @@ if (WIN32)
     add_library(VKstatic.${MAJOR} STATIC ${LOADER_SRCS} dirent_on_windows.c)
     set_target_properties(VKstatic.${MAJOR} PROPERTIES OUTPUT_NAME VKstatic.${MAJOR})
     target_link_libraries(vulkan-${MAJOR} shlwapi)
-endif()
-if (NOT WIN32)
+else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpointer-arith")
 
     add_library(vulkan SHARED ${LOADER_SRCS})
     set_target_properties(vulkan PROPERTIES SOVERSION "1" VERSION "1.0.3")
+	target_compile_options(vulkan PUBLIC -Wno-unused-function)
     target_link_libraries(vulkan -ldl -lpthread -lm)
+
+	if (WIN32)
+		target_link_libraries(vulkan -lshlwapi)
+	endif()
 endif()

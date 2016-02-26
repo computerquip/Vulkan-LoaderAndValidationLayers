@@ -41,9 +41,9 @@ endif()
 
 target_link_libraries(vkjson_unittest vkjson)
 
-if(WIN32)
+if(MSVC)
     target_link_libraries(vkjson_info vkjson vulkan-${MAJOR})
-elseif(UNIX)
+else()
     target_link_libraries(vkjson_info vkjson vulkan)
 else()
 endif()
