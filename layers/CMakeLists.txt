@@ -59,25 +59,28 @@ else()
     endif()
 endif()
 
-if (WIN32)
+if (MSVC)
     macro(add_vk_layer target)
-	add_custom_command(OUTPUT VkLayer_${target}.def
-		COMMAND ${PYTHON_CMD} ${PROJECT_SOURCE_DIR}/vk-generate.py win-def-file VkLayer_${target} layer > VkLayer_${target}.def
-		DEPENDS ${PROJECT_SOURCE_DIR}/vk-generate.py ${PROJECT_SOURCE_DIR}/vk.py
-	)
-	add_library(VkLayer_${target} SHARED ${ARGN} VkLayer_${target}.def)
-    target_link_Libraries(VkLayer_${target} layer_utils)
-	add_dependencies(VkLayer_${target} layer_utils_static)
-	add_dependencies(VkLayer_${target} generate_vk_layer_helpers)
-	set_target_properties(VkLayer_${target} PROPERTIES LINK_FLAGS "/DEF:${CMAKE_CURRENT_BINARY_DIR}/VkLayer_${target}.def")
+		add_custom_command(OUTPUT VkLayer_${target}.def
+			COMMAND ${PYTHON_CMD} ${PROJECT_SOURCE_DIR}/vk-generate.py win-def-file VkLayer_${target} layer > VkLayer_${target}.def
+			DEPENDS ${PROJECT_SOURCE_DIR}/vk-generate.py ${PROJECT_SOURCE_DIR}/vk.py
+		)
+		add_library(VkLayer_${target} SHARED ${ARGN} VkLayer_${target}.def)
+	    target_link_Libraries(VkLayer_${target} layer_utils shlwapi)
+		add_dependencies(VkLayer_${target} layer_utils_static)
+		add_dependencies(VkLayer_${target} generate_vk_layer_helpers)
+		set_target_properties(VkLayer_${target} PROPERTIES LINK_FLAGS "/DEF:${CMAKE_CURRENT_BINARY_DIR}/VkLayer_${target}.def")
     endmacro()
 else()
     macro(add_vk_layer target)
-	add_library(VkLayer_${target} SHARED ${ARGN})
-    target_link_Libraries(VkLayer_${target} layer_utils)
-	add_dependencies(VkLayer_${target} generate_vk_layer_helpers)
-	set_target_properties(VkLayer_${target} PROPERTIES LINK_FLAGS "-Wl,-Bsymbolic")
-	install(TARGETS VkLayer_${target} DESTINATION ${PROJECT_BINARY_DIR}/install_staging)
+		add_library(VkLayer_${target} SHARED ${ARGN})
+	    target_link_Libraries(VkLayer_${target} layer_utils)
+		if (WIN32)
+			target_link_libraries(VkLayer_${target} shlwapi)
+		endif ()
+		add_dependencies(VkLayer_${target} generate_vk_layer_helpers)
+		set_target_properties(VkLayer_${target} PROPERTIES LINK_FLAGS "-Wl,-Bsymbolic")
+		install(TARGETS VkLayer_${target} DESTINATION ${PROJECT_BINARY_DIR}/install_staging)
     endmacro()
 endif()
 

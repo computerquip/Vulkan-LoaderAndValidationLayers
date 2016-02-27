@@ -10,14 +10,13 @@ file(COPY ${TEXTURES} DESTINATION ${CMAKE_BINARY_DIR}/demos)
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-if(WIN32)
+if(MSVC)
   set (LIBRARIES "vulkan-${MAJOR}")
-elseif(UNIX)
-  set (LIBRARIES "vulkan")
 else()
+  set (LIBRARIES "vulkan")
 endif()
 
-if(WIN32)
+if(MSVC)
     # For Windows, since 32-bit and 64-bit items can co-exist, we build each in its own build directory.
     # 32-bit target data goes in build32, and 64-bit target data goes into build.  So, include/link the
     # appropriate data at build time.
@@ -52,7 +51,7 @@ if(WIN32)
    file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/demos)
 else()
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/demos/tri-vert.spv
-       COMMAND ${GLSLANG_PREFIX}/build/install/bin/glslangValidator -s -V -o tri-vert.spv ${PROJECT_SOURCE_DIR}/demos/tri.vert 
+       COMMAND ${GLSLANG_PREFIX}/build/install/bin/glslangValidator -s -V -o tri-vert.spv ${PROJECT_SOURCE_DIR}/demos/tri.vert
        DEPENDS tri.vert ${GLSLANG_PREFIX}/build/install/bin/glslangValidator
        )
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/demos/tri-frag.spv

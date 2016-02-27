@@ -30,15 +30,12 @@ include_directories(
 
 add_library(vkjson STATIC vkjson.cc vkjson_device.cc ../../loader/cJSON.c)
 
-if(UNIX)
-    add_executable(vkjson_unittest vkjson_unittest.cc)
-    add_executable(vkjson_info vkjson_info.cc)
-else()
+if (MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
-    add_executable(vkjson_unittest vkjson_unittest.cc)
-    add_executable(vkjson_info vkjson_info.cc)
 endif()
 
+add_executable(vkjson_unittest vkjson_unittest.cc)
+add_executable(vkjson_info vkjson_info.cc)
 target_link_libraries(vkjson_unittest vkjson)
 
 if(WIN32)
