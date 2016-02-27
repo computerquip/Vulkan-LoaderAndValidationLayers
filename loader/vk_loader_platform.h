@@ -362,7 +362,7 @@ static void *loader_platform_get_proc_address(loader_platform_dl_handle library,
                                               const char *name) {
     assert(library);
     assert(name);
-    return GetProcAddress(library, name);
+    return (void *)GetProcAddress(library, name);
 }
 static char *loader_platform_get_proc_address_error(const char *name) {
     static char errorMsg[120];
@@ -387,7 +387,7 @@ InitFuncWrapper(PINIT_ONCE InitOnce, PVOID Parameter, PVOID *Context) {
 static void loader_platform_thread_once(void *ctl, void (*func)(void)) {
     assert(func != NULL);
     assert(ctl != NULL);
-    InitOnceExecuteOnce((PINIT_ONCE)ctl, InitFuncWrapper, func, NULL);
+    InitOnceExecuteOnce((PINIT_ONCE)ctl, InitFuncWrapper, (void*)func, NULL);
 }
 
 // Thread IDs:
